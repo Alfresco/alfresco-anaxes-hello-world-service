@@ -10,8 +10,6 @@ To build and test the service execute the following command:
 
     mvn clean package
 
-NOTE: This will also build and push a Docker image named "anaxes-hello-service" to your local registry.
-
 # Run
 
 To run the service you must first have postgres running.  You could do this via Docker:
