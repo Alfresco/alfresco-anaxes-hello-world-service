@@ -101,9 +101,8 @@
             <dependencies>
                 <dependency>
                     <groupId>org.alfresco.deployment</groupId>
-                    <artifactId>anaxes-hello-world</artifactId>
+                    <artifactId>anaxes-hello-world-tests</artifactId>
                     <version>${project.version}</version>
-                    <classifier>tests</classifier>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -121,11 +120,18 @@
                         <version>${dependency.plugin.surefire.version}</version>
                         <configuration>
                             <dependenciesToScan>
-                                <dependency>org.alfresco.deployment:anaxes-hello-world</dependency>
+                                <dependency>org.alfresco.deployment:anaxes-hello-world-tests</dependency>
                             </dependenciesToScan>
-                            <suiteXmlFiles>
-                                <file>src/test/resources/app_suite_testng.xml</file>
-                            </suiteXmlFiles>
+                            <properties>
+                            <property>
+                                <name>testjar</name>
+                                <value>anaxes-hello-world-tests-${project.version}.jar</value>
+                            </property>
+                            <property>
+                                <name>xmlpathinjar</name>
+                                <value>app_suite_testing.xml</value>
+                            </property>
+                            </properties>
                         </configuration>
                     </plugin>
                 </plugins>
