@@ -97,7 +97,7 @@
 
     <profiles>
         <profile>
-            <id>app-testing</id>
+            <id>api-testing</id>
             <dependencies>
                 <dependency>
                     <groupId>org.alfresco.deployment</groupId>
@@ -132,6 +132,10 @@
                                 <value>app_suite_testing.xml</value>
                             </property>
                             </properties>
+                            <groups>apitest</groups>
+                            <excludes>
+                                <exclude>**/HelloControllerTest.java</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
