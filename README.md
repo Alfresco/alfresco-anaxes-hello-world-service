@@ -14,7 +14,7 @@ To build and test the service execute the following command:
 
 To run the service you must first have postgres running.  You could do this via Docker:
 
-    docker run -p 5432:5432 postgres:9.4
+    docker run -p 5432:5432 --name postgres postgres:9.4
 
 Then run the service itself by executing the following command:
 
