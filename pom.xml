@@ -18,6 +18,7 @@
         <java.version>1.8</java.version>
         <!-- dependency versions -->
         <dependency.postgres.version>9.4.1212</dependency.postgres.version>
+        <dependency.httpclient.version>4.5.3</dependency.httpclient.version>
         <dependency.plugin.rat.version>0.12</dependency.plugin.rat.version>
         <dependency.testng.version>6.11</dependency.testng.version>
         <dependency.plugin.surefire.version>2.20.1</dependency.plugin.surefire.version>
@@ -32,6 +33,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${dependency.postgres.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${dependency.httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
