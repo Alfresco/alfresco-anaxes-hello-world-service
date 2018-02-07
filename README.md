@@ -18,4 +18,4 @@ To run the service you must first have postgres running.  You could do this via 
 
 Then run the service itself by executing the following command:
 
-    java -Dspring.datasource.username=postgres -jar target/anaxes-hello-world-service-0.1-SNAPSHOT.jar
+    mvn spring-boot:run -Drun.jvmArguments="-Dspring.datasource.username=postgres"
