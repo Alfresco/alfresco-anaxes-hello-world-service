@@ -16,8 +16,15 @@
 
 package org.alfresco.deployment.sample;
 
-import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +32,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Configuration
 @RestController
 @RequestMapping("/hello")
 public class HelloController
 {
+    private static final Log logger = LogFactory.getLog(HelloController.class);
+    
+    @Value("${alfresco.dbp.url}")
+    private String dbpUrl;
+    
     @Autowired
     private HelloTextRepository helloTextRepository;
 
@@ -41,8 +57,15 @@ public class HelloController
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        
+        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+        KeycloakAuthenticationToken token = (KeycloakAuthenticationToken)request.getUserPrincipal();
+        KeycloakSecurityContext context = (KeycloakSecurityContext)token.getCredentials();
+        
+        if (logger.isDebugEnabled())
+            logger.debug("jwt: " + context.getTokenString());
+        
         return new ResponseEntity<HelloText>(helloText, HttpStatus.OK);
-                
     }
 
     @RequestMapping(method = RequestMethod.POST, 
