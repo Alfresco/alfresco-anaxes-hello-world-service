@@ -76,7 +76,7 @@ public class CorsConfiguration
                 //MaxAge is using the default of 30 minutes.
                 registry.addMapping("/hello").allowedOrigins(originsArray);
                 registry.addMapping("/hello/*").allowedOrigins(originsArray)
-                        .allowedMethods("GET", "PUT", "DELETE");
+                        .allowedMethods("GET", "PUT", "DELETE", "OPTIONS");
             }
         };
     }
