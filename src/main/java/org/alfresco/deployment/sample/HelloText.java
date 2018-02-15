@@ -31,5 +31,4 @@ public class HelloText
     @Id
     private String key;
     private String value;
-
 }
