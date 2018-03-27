@@ -29,7 +29,6 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Printed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +65,7 @@ public class KafkaStreamsConsumerApp
         }
 
         KStream<String, BaseEvent> baseEventStream = builder.stream(topics, Consumed.with(stringSerde, eventSerde));
-        baseEventStream.print(Printed.<String, BaseEvent>toSysOut().withLabel("Event"));
+        baseEventStream.foreach((key, value) -> LOGGER.info("[Event] key: {}, value: {}" , key, value));
 
         KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), streamsConfig);
         LOGGER.info("Starting KafkaStreamsConsumerApp...");
