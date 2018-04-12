@@ -17,11 +17,21 @@
 package org.alfresco.deployment.sample;
 
 import org.alfresco.deployment.sample.kafka.KafkaStreamsConsumerApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
 
 @SpringBootApplication
 @Import({ CorsConfiguration.class })
@@ -35,10 +45,11 @@ public class Application
     @Bean
     public CommandLineRunner init(HelloTextRepository repository, KafkaStreamsConsumerApp kafkaStreamsConsumerApp)
     {
+
         return (args) -> {
             // create the default welcome message
             repository.save(new HelloText("welcome", "Hello World!"));
-            kafkaStreamsConsumerApp.start();
+            //kafkaStreamsConsumerApp.start();
         };
     }
 }

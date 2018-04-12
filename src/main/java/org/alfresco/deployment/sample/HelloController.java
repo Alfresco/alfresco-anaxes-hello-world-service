@@ -16,20 +16,27 @@
 
 package org.alfresco.deployment.sample;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
 
 @RestController
 @RequestMapping("/hello")
 public class HelloController
 {
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
+
     @Autowired
     private HelloTextRepository helloTextRepository;
 
@@ -71,5 +78,29 @@ public class HelloController
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @RequestMapping(path = "/aps", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getApsEndpoint(RestTemplate restTemplate)
+    {
+        String theUrl = "http://localhost:8080/activiti-app/api/enterprise/app-version";
+        HttpHeaders headers = createHttpHeaders("admin","admin");
+        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+        ApsEndpoint about = restTemplate.exchange(theUrl, HttpMethod.GET, entity, ApsEndpoint.class).getBody();
+        return new ResponseEntity<String>(about.toString(), HttpStatus.OK);
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+
+    private HttpHeaders createHttpHeaders(String user, String password)
+    {
+        String notEncoded = user + ":" + password;
+        String encodedAuth = Base64.getEncoder().encodeToString(notEncoded.getBytes());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Basic " + encodedAuth);
+        return headers;
     }
 }
