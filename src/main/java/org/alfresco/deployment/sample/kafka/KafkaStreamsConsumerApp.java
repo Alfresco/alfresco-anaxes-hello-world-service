@@ -42,6 +42,8 @@ public class KafkaStreamsConsumerApp
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaStreamsConsumerApp.class);
 
+    @Value("${messaging.kafka.enabled}")
+    private boolean enabled;
     @Value("${messaging.kafka.applicationId}")
     private String applicationId;
     @Value("${messaging.kafka.bootstrapServers}")
@@ -51,6 +53,12 @@ public class KafkaStreamsConsumerApp
 
     public void start()
     {
+        if (!enabled)
+        {
+            LOGGER.info("Kafka Streams consumer not enabled.");
+            return;
+        }
+
         StreamsConfig streamsConfig = new StreamsConfig(getStreamsConfigProperties());
 
         Serde<BaseEvent> eventSerde = StreamsSerdes.BaseEventSerde();
