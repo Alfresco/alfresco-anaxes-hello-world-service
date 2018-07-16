@@ -21,7 +21,7 @@
         <dependency.plugin.rat.version>0.12</dependency.plugin.rat.version>
         <dependency.testng.version>6.11</dependency.testng.version>
         <dependency.plugin.surefire.version>2.20.1</dependency.plugin.surefire.version>
-        <dependency.kafka-streams.version>1.0.0</dependency.kafka-streams.version>
+        <dependency.camel.version>2.20.2</dependency.camel.version>
         <dependency.event-model.version>0.0.1-SNAPSHOT</dependency.event-model.version>
     </properties>
 
@@ -49,6 +49,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>1.2.0.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>1.4.0</version>
@@ -59,9 +64,14 @@
             <version>2.6</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-            <version>${dependency.kafka-streams.version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-starter</artifactId>
+            <version>${dependency.camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-amqp</artifactId>
+            <version>${dependency.camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.alfresco</groupId>
