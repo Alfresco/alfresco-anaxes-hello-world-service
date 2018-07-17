@@ -52,7 +52,7 @@ public class CamelRouteConfig
     private String activemqUrl;
 
     @Value("${messaging.config.topic.endpoint}")
-    private String topicEndpointUrl;
+    private String topicEndpoint;
 
     @Value("${messaging.camel.from.uri}")
     private String fromUri;
@@ -125,10 +125,9 @@ public class CamelRouteConfig
             return retryTemplate.execute(retryContext -> {
                 try
                 {
-                    ResponseEntity<EntryEntity> restExchange = restTemplate.exchange(topicEndpointUrl,
+                    ResponseEntity<EntryEntity> restExchange = restTemplate.exchange(topicEndpoint,
                                 HttpMethod.OPTIONS, null, EntryEntity.class);
                     EventTopicEntity topicEntity = restExchange.getBody().entry;
-                    // .getEntry();
                     return new EventTopicEntity("amqpConnection:topic:" + topicEntity.eventTopic,
                                 topicEntity.brokerUri);
                 }
