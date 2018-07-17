@@ -17,6 +17,8 @@ package org.alfresco.deployment.sample.activemq;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
@@ -45,17 +47,32 @@ public class CamelRouteConfig
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelRouteConfig.class);
 
+    private static final String EVENT_TOPIC_URL = "/api/public/events/versions/1/events";
+    private static final String CAMEL_BASE_TOPIC_URI = "amqpConnection:topic:";
+
     private static final long RETRY_BACK_OFF_PERIOD = 2000L;
     private static final int RETRY_MAX_ATTEMPTS = 30;
 
-    @Value("${messaging.broker.activemq.url}")
+    @Value("${alfresco.events.broker.activemq.url}")
     private String activemqUrl;
 
-    @Value("${messaging.config.topic.endpoint}")
+    @Value("${alfresco.events.eventGateway.url}")
+    private String eventGatewayUrl;
+
+    @Value("${alfresco.events.topic}")
+    private String topicName;
+
     private String topicEndpoint;
 
-    @Value("${messaging.camel.from.uri}")
-    private String fromUri;
+    @PostConstruct
+    public void init()
+    {
+        if (eventGatewayUrl.endsWith("/"))
+        {
+            eventGatewayUrl = eventGatewayUrl.substring(0, eventGatewayUrl.length() - 1);
+        }
+        topicEndpoint = eventGatewayUrl + EVENT_TOPIC_URL;
+    }
 
     @Bean
     public RoutesBuilder simpleRoute()
@@ -128,7 +145,7 @@ public class CamelRouteConfig
                     ResponseEntity<EntryEntity> restExchange = restTemplate.exchange(topicEndpoint,
                                 HttpMethod.OPTIONS, null, EntryEntity.class);
                     EventTopicEntity topicEntity = restExchange.getBody().entry;
-                    return new EventTopicEntity("amqpConnection:topic:" + topicEntity.eventTopic,
+                    return new EventTopicEntity(CAMEL_BASE_TOPIC_URI+ topicEntity.eventTopic,
                                 topicEntity.brokerUri);
                 }
                 catch (Exception ex)
@@ -142,7 +159,7 @@ public class CamelRouteConfig
         catch (Exception ex)
         {
             LOGGER.info("Couldn't get the topic info after {} tries. Falling back to default values.", RETRY_MAX_ATTEMPTS);
-            return new EventTopicEntity(fromUri, activemqUrl);
+            return new EventTopicEntity(CAMEL_BASE_TOPIC_URI + topicName, activemqUrl);
         }
     }
 
