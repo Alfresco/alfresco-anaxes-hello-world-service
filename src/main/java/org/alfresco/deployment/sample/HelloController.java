@@ -39,12 +39,8 @@ public class HelloController
     public ResponseEntity<HelloText> getHelloText(@PathVariable String key)
     {
         Optional<HelloText> helloText = helloTextRepository.findById(key);
-        if (helloText.isPresent())
-        {
-            return new ResponseEntity<>(helloText.get(), HttpStatus.OK);
-
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return helloText.map(text -> new ResponseEntity<>(text, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @RequestMapping(method = RequestMethod.POST, 
