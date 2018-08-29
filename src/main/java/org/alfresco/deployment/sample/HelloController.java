@@ -16,6 +16,8 @@
 
 package org.alfresco.deployment.sample;
 
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,27 +38,27 @@ public class HelloController
     @RequestMapping(path = "/{key}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HelloText> getHelloText(@PathVariable String key)
     {
-        HelloText helloText = helloTextRepository.findOne(key);
-        if (helloText == null)
+        Optional<HelloText> helloText = helloTextRepository.findById(key);
+        if (helloText.isPresent())
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(helloText.get(), HttpStatus.OK);
+
         }
-        return new ResponseEntity<HelloText>(helloText, HttpStatus.OK);
-                
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(method = RequestMethod.POST, 
             consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HelloText> createHelloText(@RequestBody HelloText helloText)
     {
-        return new ResponseEntity<HelloText>(helloTextRepository.save(helloText), HttpStatus.CREATED);
+        return new ResponseEntity<>(helloTextRepository.save(helloText), HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.PUT, 
             consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<HelloText> updateHelloText(@RequestBody HelloText helloText)
     {
-        return new ResponseEntity<HelloText>(helloTextRepository.save(helloText), HttpStatus.OK);
+        return new ResponseEntity<>(helloTextRepository.save(helloText), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.DELETE)
@@ -64,7 +66,7 @@ public class HelloController
     {
         try
         {
-            helloTextRepository.delete(key);
+            helloTextRepository.deleteById(key);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         catch (Exception e)
