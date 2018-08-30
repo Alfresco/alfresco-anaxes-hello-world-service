@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.7.RELEASE</version>
+        <version>2.0.3.RELEASE</version>
     </parent>
 
     <properties>
@@ -20,8 +20,8 @@
         <dependency.postgres.version>9.4.1212</dependency.postgres.version>
         <dependency.plugin.rat.version>0.12</dependency.plugin.rat.version>
         <dependency.testng.version>6.11</dependency.testng.version>
-        <dependency.plugin.surefire.version>2.20.1</dependency.plugin.surefire.version>
-        <dependency.camel.version>2.20.2</dependency.camel.version>
+        <dependency.plugin.surefire.version>2.22.0</dependency.plugin.surefire.version>
+        <dependency.camel.version>2.22.0</dependency.camel.version>
         <dependency.event-model.version>0.0.1-SNAPSHOT</dependency.event-model.version>
     </properties>
 
@@ -74,6 +74,11 @@
             <version>${dependency.camel.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <version>${dependency.camel.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-event-model</artifactId>
             <version>${dependency.event-model.version}</version>
@@ -113,6 +118,16 @@
                     <includes>
                         <include>**/*.java</include>
                     </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${dependency.plugin.surefire.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/EventsTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -156,6 +171,28 @@
                             </property>
                             </properties>
                             <groups>apitest</groups>
+                            <excludes>
+                                <exclude>**/HelloControllerTest.java</exclude>
+                                <exclude>**/EventsTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>events-testing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${dependency.plugin.surefire.version}</version>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <messaging.config.enabled>true</messaging.config.enabled>
+                            </systemPropertyVariables>
+                            <!-- We only care about 'EventsTest.java' in this profile, so exclude all other test classes -->
                             <excludes>
                                 <exclude>**/HelloControllerTest.java</exclude>
                             </excludes>

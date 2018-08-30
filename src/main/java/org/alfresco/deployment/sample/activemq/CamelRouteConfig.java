@@ -19,13 +19,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 
+import org.alfresco.event.databind.EventObjectMapperFactory;
+import org.alfresco.event.model.EventV1;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.spi.DataFormat;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -63,6 +68,13 @@ public class CamelRouteConfig
     private String topicName;
 
     private String topicEndpoint;
+    private final SimpleProcessor simpleProcessor;
+
+    @Autowired
+    public CamelRouteConfig(SimpleProcessor simpleProcessor)
+    {
+        this.simpleProcessor = simpleProcessor;
+    }
 
     @PostConstruct
     public void init()
@@ -89,9 +101,17 @@ public class CamelRouteConfig
                 }
 
                 from(topicUri).id("HelloRoute")
-                            .log("${body}");
+                            .log("${body}")
+                            .unmarshal(publicDataFormat())
+                            .process(simpleProcessor);
             }
         };
+    }
+
+    @Bean
+    public DataFormat publicDataFormat()
+    {
+        return new JacksonDataFormat(EventObjectMapperFactory.createInstance(), EventV1.class);
     }
 
     @Bean
@@ -176,6 +196,11 @@ public class CamelRouteConfig
         {
             this.entry = entry;
         }
+
+        public EventTopicEntity getEntry()
+        {
+            return entry;
+        }
     }
 
     public static class EventTopicEntity
@@ -202,6 +227,16 @@ public class CamelRouteConfig
         public void setBrokerUri(String brokerUri)
         {
             this.brokerUri = brokerUri;
+        }
+
+        public String getEventTopic()
+        {
+            return eventTopic;
+        }
+
+        public String getBrokerUri()
+        {
+            return brokerUri;
         }
     }
 }
