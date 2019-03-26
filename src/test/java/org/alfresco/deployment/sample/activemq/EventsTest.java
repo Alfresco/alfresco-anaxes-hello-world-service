@@ -50,7 +50,7 @@ import org.springframework.web.client.RestTemplate;
 public class EventsTest
 {
     private static final String EVENT_TOPIC_API = "/api/public/events/versions/1/events";
-    private static final String SEND_EVENTS_API = "/alfresco/mock/events";
+    private static final String SEND_EVENTS_API = "/alfresco/mock/random-events";
 
     @Value("${alfresco.events.eventGateway.url}")
     private String eventGatewayUrl;
